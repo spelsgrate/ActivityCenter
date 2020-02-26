@@ -1,0 +1,52 @@
+<nav class="navbar sticky-top navbar-dark bg-dark text-white mb-5">
+    <a class="navbar-brand ml-5">Welcome to the Activity Center!</a>
+    <div class="navbar-brand">
+        <a class="navbar-brand"> Welcome, @ViewBag.u.Name! </a>
+        <a class="navbar-brand" href="logout"> Logout </a>
+    </div>
+</nav>
+<div class="container">
+    <table class="table table-hover mb-5">
+        <thead class="bg-dark text-white">
+            <tr>
+                <th>Activity</th>
+                <th>Date and Time</th>
+                <th>Duration</th>
+                <th>Event Coordinator</th>
+                <th>No. Of Participants</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var a in ViewBag.Activities) {
+                <tr>
+                    @if (a.Date > DateTime.Now) {
+                    <td><a href="activity/@a.OccasionId">@a.Title</a></td>
+                    <td>@a.Date.ToString("MM/dd") @@ @a.Time.ToString("hh':'mm")</td>
+                    <td>@a.Duration @a.DurationType</td>
+                    <td>@a.Coordinator.Name</td>
+                    <td>@a.Attendees.Count</td>
+                    }
+                    @{
+                        bool isGoing = false;
+                        foreach(var g in a.Attendees) {
+                            if(g.UserId == ViewBag.u.UserId) {
+                                isGoing = true;
+                            }
+                        }
+                        if(a.Coordinator.UserId == ViewBag.u.UserId && isGoing) {
+                            <td><a href="/delete/@a.OccasionId">Delete</a></td>
+                        } else if (isGoing && a.Coordinator.UserId != ViewBag.u.UserId) {
+                            <td><a href="/leave/@a.OccasionId/@ViewBag.u.UserId">Leave</a></td>
+                        } else {
+                            <td><a href="/join/@a.OccasionId/@ViewBag.u.UserId">Join</a></td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="d-flex flex-row-reverse">
+        <a href="newactivity" class="btn btn-dark">Add New Activity</a>
+    </div>
+</div>

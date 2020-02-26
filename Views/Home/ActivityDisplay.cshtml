@@ -1,0 +1,38 @@
+@model Occasion
+<nav class="navbar sticky-top navbar-dark bg-dark text-white mb-5">
+    <a class="navbar-brand ml-5">Welcome to the Activity Center!</a>
+    <div class="navbar-brand">
+        <a class="navbar-brand" href="/dashboard"> Home </a>
+        <a class="navbar-brand" href="logout"> Logout </a>
+    </div>
+</nav>
+<hr>
+<div class="container">
+    <div class="d-flex flex-row-reverse">
+        @{
+            bool isGoing = false;
+            foreach(var g in ViewBag.a.Attendees) {
+                if(g.UserId == ViewBag.u.UserId) {
+                    isGoing = true;
+                }
+            }
+            if( ViewBag.a.Coordinator.UserId == ViewBag.u.UserId && isGoing) {
+                <a href="/delete/@ViewBag.a.OccasionId" class="btn btn-danger">Delete</a>  
+            } else if (isGoing && ViewBag.a.Coordinator.UserId != ViewBag.u.UserId) {
+                <a href="/leave/@ViewBag.a.OccasionId/@ViewBag.u.UserId" class="btn btn-warning">Leave</a>  
+            } else {
+                <a href="/join/@ViewBag.a.OccasionId/@ViewBag.u.UserId" class="btn btn-success">Join</a>    
+            }
+        }
+    </div>
+    <h1 class="mb-5">@ViewBag.a.Title</h1>
+    <h6 class="mb-5">Event Coordinator: @ViewBag.a.Coordinator.Name</h6>
+    <h3 class="display-lead">Description:</h3><br>
+    <p>@ViewBag.a.Description</p>
+    <hr>
+    <h3 class="display-lead mb-5">Participants:</h3>
+    @foreach(var a in ViewBag.a.Attendees)
+    {
+        <li>@a.SingleUser.Name</li>
+    }
+</div>
